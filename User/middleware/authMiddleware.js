@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user.model');
-
+const blacklisttokenModel = require('../models/blacklisttoken.model');
 module.exports.authenticate = async (req, res, next) => {
     try {
         console.log("\n================ AUTH MIDDLEWARE ================");
@@ -25,6 +25,12 @@ module.exports.authenticate = async (req, res, next) => {
             console.log("❌ FAIL: Token not found");
             console.log("================================================\n");
             return res.status(401).json({ message: 'Unauthorized - Token missing' });
+        }
+        const isBlacklisted = await blacklisttokenModel.findOne({ token});
+        if (isBlacklisted) {
+            console.log("❌ FAIL: Token is blacklisted");
+            console.log("================================================\n");
+            return res.status(401).json({ message: 'Unauthorized - Token is blacklisted' });
         }
 
         console.log("🔑 JWT_SECRET exists:", !!process.env.JWT_SECRET);

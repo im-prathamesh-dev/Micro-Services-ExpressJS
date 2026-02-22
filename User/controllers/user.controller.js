@@ -53,13 +53,8 @@ module.exports.register = async (req, res) => {
         console.log("🍪 Cookie set");
 
         res.status(201).json({
-            message: 'User registered successfully',
             token,
-            user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email
-            }
+            newUser
         });
 
     } catch (error) {
