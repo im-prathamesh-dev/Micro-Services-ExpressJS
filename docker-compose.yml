@@ -1,0 +1,60 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  user-service:
+    build: ./User
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MoNGODB_URI=mongodb://mongodb:27017/uber-user-service
+      - JWT_SECRET=microservice_key_123
+      - RABBITMQ_URI=amqps://oerohrav:D6Ur13ZHqMvCcNjxhpbbAvHMyHem6MbX@fuji.lmq.cloudamqp.com/oerohrav
+    depends_on:
+      - mongodb
+
+  captain-service:
+    build: ./captain
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MoNGODB_URI=mongodb://mongodb:27017/uber-captain-service
+      - JWT_SECRET=microservice_key_123
+      - RABBITMQ_URI=amqps://oerohrav:D6Ur13ZHqMvCcNjxhpbbAvHMyHem6MbX@fuji.lmq.cloudamqp.com/oerohrav
+    depends_on:
+      - mongodb
+
+  ride-service:
+    build: ./ride
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MoNGODB_URI=mongodb://mongodb:27017/uber-ride-service
+      - JWT_SECRET=microservice_key_123
+      - RABBITMQ_URI=amqps://oerohrav:D6Ur13ZHqMvCcNjxhpbbAvHMyHem6MbX@fuji.lmq.cloudamqp.com/oerohrav
+    depends_on:
+      - mongodb
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_SERVICE_URL=http://user-service:3001
+      - CAPTAIN_SERVICE_URL=http://captain-service:3002
+      - RIDE_SERVICE_URL=http://ride-service:3003
+    depends_on:
+      - user-service
+      - captain-service
+      - ride-service
+
+volumes:
+  mongo-data:
