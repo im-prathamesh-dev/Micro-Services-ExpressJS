@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const captainSchema = new mongoose.Schema({
+
+const riderSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -12,13 +13,8 @@ const captainSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        select: false, // Exclude password from query results by default
-    },
-    isAvailable: {
-        type: Boolean,
-        default: false,
+        select: false,
     },
 });
 
-module.exports  = mongoose.model('captain', captainSchema);
-
+module.exports = mongoose.model('rider', riderSchema);

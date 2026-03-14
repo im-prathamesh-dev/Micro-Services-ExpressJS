@@ -15,9 +15,9 @@ module.exports.authenticate = async (req, res, next) => {
 
         const token =
             req.cookies?.token ||
-            authHeader?.startsWith('Bearer ')
+            (authHeader?.startsWith('Bearer ')
                 ? authHeader.split(' ')[1]
-                : null;
+                : null);
 
         console.log("➡️  Extracted token:", token);
 

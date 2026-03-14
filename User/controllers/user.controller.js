@@ -54,7 +54,11 @@ module.exports.register = async (req, res) => {
 
         res.status(201).json({
             token,
-            newUser
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email
+            }
         });
 
     } catch (error) {
@@ -70,7 +74,7 @@ module.exports.login = async (req, res) => {
         console.log("Email:", email);
         console.log("Password entered:", password);
 
-        const user = await userModel.findOne({ email });
+        const user = await userModel.findOne({ email }).select('+password');
 
         console.log("👤 User from DB:", user);
 
@@ -126,8 +130,8 @@ module.exports.logout = async (req, res) => {
     try {
         console.log("📥 Logout request");
 
-        const token = req.cookies.token;
-        console.log("🍪 Token from cookie:", token);
+        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+        console.log("🎟 Token for logout:", token);
 
         if (!token) {
             console.log("❌ No token found");
